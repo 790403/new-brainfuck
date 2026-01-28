@@ -14,13 +14,12 @@ int&mem(int aa){
     }
     return turemem[aa];
 }
-void getnum(int&num,bool&isaddr,bool&hasnum,int&i){
+void getnum(int&num,bool&isaddr,bool&hasnum){
     num=0;
     isaddr=0;
     hasnum=0;
     int aaa=1;
     if(a[i+1]=='@')isaddr=1,i++,hasnum=1;
-    if(a[i+1]=='-')i++,hasnum=1,aaa=-1;
     while(a[i+1]>='0'&&a[i+1]<='9')num*=10,num+=a[i+1]-'0',i++,hasnum=1;
     num*=aaa;
     if(!hasnum)num=1;
@@ -45,38 +44,13 @@ signed main(signed argc,char* argv[]){
             cout<<"用-f打开文件\n用-c直接运行单行代码";
             return 0;
         }
-        string ans="";
-        for(int i=0;i<a.size();i++){
-            if(a[i]=='+'){
-                int count=1;
-                while(i+1<a.size()&&a[i+1]=='+')count++,i++;
-                if(count>1)ans+="+"+to_string(count);
-                else ans+="+";
-            }else if(a[i]=='-'){
-                int count=1;
-                while(i+1<a.size()&&a[i+1]=='-')count++,i++;
-                if(count>1)ans+="-"+to_string(count);
-                else ans+="-";
-            }else if(a[i]=='>'){
-                int count=1;
-                while(i+1<a.size()&&a[i+1]=='>')count++,i++;
-                if(count>1)ans+=">"+to_string(count);
-                else ans+=">";
-            }else if(a[i]=='<'){
-                int count=1;
-                while(i+1<a.size()&&a[i+1]=='<')count++,i++;
-                if(count>1)ans+="<"+to_string(count);
-                else ans+="<";
-            }else ans+=a[i];
-        }
-        a=ans;
         a+='\n';
         for(i=0;i<a.size();i++){
             int num;
             bool isaddr,hasnum;
             switch(a[i]){
                 case '>':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     if(ptr+num<maxsize)ptr+=num;
                     else{
                         cerr<<"\n在第"<<i+1<<"个字符的数组访问超过了最大值\n";
@@ -84,7 +58,7 @@ signed main(signed argc,char* argv[]){
                     }
                     break;
                 case '<':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     if(ptr-num>=0)ptr-=num;
                     else{
                         cerr<<"\n在第"<<i+1<<"个字符的数组访问小于了0\n";
@@ -92,19 +66,19 @@ signed main(signed argc,char* argv[]){
                     }
                     break;
                 case '+':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     mem(ptr)+=num;
                     break;
                 case '-':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     mem(ptr)-=num;
                     break;
                 case '*':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     mem(ptr)*=num;
                     break;
                 case '/':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     if(num==0){
                         cerr<<"\n在第"<<i+1<<"个字符,除数不能为零\n";
                         throw runtime_error("除数不能为零");
@@ -112,7 +86,7 @@ signed main(signed argc,char* argv[]){
                     mem(ptr)/=num;
                     break;
                 case '%':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     if(num==0){
                         cerr<<"\n在第"<<i+1<<"个字符,除数不能为零\n";
                         throw runtime_error("除数不能为零");
@@ -201,7 +175,7 @@ signed main(signed argc,char* argv[]){
                         cerr<<"\n在第"<<i+1<<"个字符的数组访问超过了最大值\n";
                         throw runtime_error("数组访问超过了最大值");
                     }
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     mem(ptr+1)=mem(ptr)>num;
                     break;
                 case '{':
@@ -210,7 +184,7 @@ signed main(signed argc,char* argv[]){
                         throw runtime_error("数组访问超过了最大值");
                     }
 
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     mem(ptr+1)=mem(ptr)<num;
                     break;
                 case '=':
@@ -218,14 +192,14 @@ signed main(signed argc,char* argv[]){
                         cerr<<"\n在第"<<i+1<<"个字符的数组访问超过了最大值\n";
                         throw runtime_error("数组访问超过了最大值");
                     }
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     mem(ptr+1)=(mem(ptr)==num);
                     break;
                 case '&':
                     mem(ptr)=ptr;
                     break;
                 case '^':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     if(num<0||num>=maxsize){
                         cerr<<"\n在第"<<i+1<<"个字符内存超界\n";
                         throw runtime_error("内存超界");
@@ -233,7 +207,7 @@ signed main(signed argc,char* argv[]){
                     ptr=num;
                     break;
                 case '|':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     mem(ptr)=num;
                     break;
                 case '\"':{
@@ -261,7 +235,7 @@ signed main(signed argc,char* argv[]){
                     break;
                 }
                 case '\\':
-                    getnum(num,isaddr,hasnum,i);
+                    getnum(num,isaddr,hasnum);
                     mem(ptr)=mem(mem(num));
                     break;
                 case '`':
